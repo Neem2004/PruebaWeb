@@ -280,7 +280,7 @@ a:focus-visible,
 
     overflow: hidden;
 
-    background-color: var(--bg);
+    background-color: #000;
 
     background-image: url("img/fondo.png");
 
@@ -293,30 +293,46 @@ a:focus-visible,
 }
 
 
-.hero-petals {
+.hero-title {
 
-    position: absolute;
+    position: relative;
 
-    inset: 0;
+    z-index: 1;
 
-    z-index: 0;
+    font-size: clamp(64px, 14vw, 220px);
 
-    pointer-events: none;
+    line-height: .82;
+
+    letter-spacing: -.06em;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    color: #f2f1ed;
+
+    text-shadow: 0 2px 22px rgba(0, 0, 0, .55);
 
 }
 
 
-.petal {
+.hero-title .line {
 
-    position: absolute;
+    display: block;
 
-    top: -6%;
+}
 
-    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
 
-    opacity: 0;
+.hero-title .indent {
 
-    will-change: transform;
+    padding-left: 12vw;
+
+}
+
+
+.dot {
+
+    font-size: .7em;
 
 }
 
@@ -338,7 +354,9 @@ a:focus-visible,
 
     font-weight: 600;
 
-    text-shadow: 0 0 12px rgba(255, 255, 255, .75);
+    color: #f2f1ed;
+
+    text-shadow: 0 0 12px rgba(0, 0, 0, .6);
 
 }
 
@@ -358,7 +376,7 @@ a:focus-visible,
 
     height: 72px;
 
-    border: 1px solid var(--fg);
+    border: 1px solid #f2f1ed;
 
     border-radius: 50%;
 
@@ -367,6 +385,8 @@ a:focus-visible,
     place-items: center;
 
     font-size: 26px;
+
+    color: #f2f1ed;
 
     /* "transform" ya no va aquí: GSAP anima x/y/rotate directamente en
        script.js (efecto magnético) y una transition CSS paralela sobre
@@ -378,9 +398,9 @@ a:focus-visible,
 
 .circle-link:hover {
 
-    background: #111;
+    background: #f2f1ed;
 
-    color: #f2f1ed;
+    color: #111;
 
     /* El giro + el tirón hacia el cursor los controla GSAP (ver script.js) */
 
@@ -1061,13 +1081,6 @@ footer {
     }
 
 
-    .hero-petals {
-
-        display: none;
-
-    }
-
-
     .cursor {
 
         display: none;
@@ -1122,6 +1135,13 @@ footer {
 
     }
 
+
+    .hero-title {
+
+        font-size: clamp(56px, 13vw, 160px);
+
+    }
+
 }
 
 
@@ -1140,6 +1160,20 @@ footer {
 .hero {
 
         padding-top: 120px;
+
+    }
+
+
+    .hero-title {
+
+        font-size: 21vw;
+
+    }
+
+
+    .hero-title .indent {
+
+        padding-left: 4vw;
 
     }
 

@@ -65,70 +65,6 @@ if (typeof gsap === "undefined") {
 
 
             /* =========================
-               PÉTALOS FLOTANTES — sobre la imagen de fondo del hero
-               Pequeños pétalos en tonos florales caen y se mecen sobre
-               la imagen. Se omiten con "reduce motion" y se limpian al
-               revertir este contexto.
-            ========================= */
-
-            const petalLayer = document.getElementById("hero-petals");
-
-            if (petalLayer && !isReducedMotion) {
-
-                const petalPalette = ["#f4a0b8", "#f7c8da", "#c8a8e9", "#bfe3c0", "#ffe9b8", "#fdf0f5"];
-
-                const petalCount = window.innerWidth < 700 ? 12 : 26;
-
-                for (let index = 0; index < petalCount; index++) {
-
-                    const petal = document.createElement("span");
-
-                    petal.className = "petal";
-
-                    const size = gsap.utils.random(6, 16);
-
-                    petal.style.width = size + "px";
-
-                    petal.style.height = (size * gsap.utils.random(1.15, 1.5)).toFixed(1) + "px";
-
-                    petal.style.left = gsap.utils.random(0, 100) + "%";
-
-                    petal.style.background = gsap.utils.random(petalPalette);
-
-                    petalLayer.appendChild(petal);
-
-                    const fallDistance = petalLayer.clientHeight * gsap.utils.random(.9, 1.2);
-
-                    gsap.to(petal, {
-
-                        keyframes: {
-
-                            y: [-60, fallDistance],
-
-                            x: [0, gsap.utils.random(-140, 140)],
-
-                            rotation: [0, gsap.utils.random(-260, 260)],
-
-                            opacity: [0, gsap.utils.random(.35, .8), gsap.utils.random(.35, .8), 0]
-
-                        },
-
-                        ease: "none",
-
-                        duration: gsap.utils.random(11, 22),
-
-                        delay: gsap.utils.random(0, 12),
-
-                        repeat: -1
-
-                    });
-
-                }
-
-            }
-
-
-            /* =========================
                CURSOR
             ========================= */
 
@@ -845,8 +781,6 @@ if (typeof gsap === "undefined") {
             return () => {
 
                 cleanupFns.forEach((fn) => fn());
-
-                if (petalLayer) petalLayer.innerHTML = "";
 
                 aboutSplits.forEach((split) => split.revert());
 
