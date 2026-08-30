@@ -344,6 +344,21 @@ a:focus-visible,
 }
 
 
+.hero-reveal {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 0;
+
+    background: #000;
+
+    will-change: transform;
+
+}
+
+
 .hero-title .line {
 
     display: block;
