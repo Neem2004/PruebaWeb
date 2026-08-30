@@ -344,12 +344,16 @@ a:focus-visible,
 
     will-change: transform, filter, opacity;
 
+    transition: opacity .45s ease;
+
 }
 
 
 .hero-bg.glitching::before {
 
     animation: hero-glitch-r .3s steps(1) infinite;
+
+    opacity: .45;
 
 }
 
@@ -358,14 +362,14 @@ a:focus-visible,
 
     animation: hero-glitch-b .3s steps(1) infinite;
 
+    opacity: .4;
+
 }
 
 
 @keyframes hero-glitch-r {
 
     0% {
-
-        opacity: .45;
 
         transform: translateX(-6px) translateY(2px);
 
@@ -375,8 +379,6 @@ a:focus-visible,
 
     25% {
 
-        opacity: .3;
-
         transform: translateX(-13px) translateY(-3px);
 
         filter: sepia(1) saturate(6) hue-rotate(315deg) brightness(1.15);
@@ -384,8 +386,6 @@ a:focus-visible,
     }
 
     50% {
-
-        opacity: .5;
 
         transform: translateX(-4px) skewX(-1deg);
 
@@ -395,8 +395,6 @@ a:focus-visible,
 
     75% {
 
-        opacity: .25;
-
         transform: translateX(-15px) translateY(3px);
 
         filter: sepia(1) saturate(6) hue-rotate(315deg) brightness(1.15);
@@ -404,8 +402,6 @@ a:focus-visible,
     }
 
     100% {
-
-        opacity: .45;
 
         transform: translateX(-8px) translateY(-2px);
 
@@ -420,8 +416,6 @@ a:focus-visible,
 
     0% {
 
-        opacity: .4;
-
         transform: translateX(7px) translateY(-2px);
 
         filter: sepia(1) saturate(6) hue-rotate(180deg) brightness(1.2);
@@ -429,8 +423,6 @@ a:focus-visible,
     }
 
     25% {
-
-        opacity: .25;
 
         transform: translateX(14px) translateY(3px);
 
@@ -440,8 +432,6 @@ a:focus-visible,
 
     50% {
 
-        opacity: .5;
-
         transform: translateX(5px) skewX(1deg);
 
         filter: sepia(1) saturate(6) hue-rotate(180deg) brightness(1.25);
@@ -450,8 +440,6 @@ a:focus-visible,
 
     75% {
 
-        opacity: .2;
-
         transform: translateX(16px) translateY(-3px);
 
         filter: sepia(1) saturate(6) hue-rotate(180deg) brightness(1.1);
@@ -459,8 +447,6 @@ a:focus-visible,
     }
 
     100% {
-
-        opacity: .4;
 
         transform: translateX(9px) translateY(2px);
 

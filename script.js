@@ -321,8 +321,9 @@ if (typeof gsap === "undefined") {
 
                     });
 
-                    // Se quita el glitch justo antes de la reconstrucción:
-                    // corte duro y el título vuelve a armarse ya limpio.
+                    // Se quita el glitch en el mismo sitio del timeline (justo
+                    // antes de la reconstrucción); la opacidad de las capas
+                    // RGB cae suave por la transición CSS, sin corte seco.
                     buildTimeline.call(() => heroBg && heroBg.classList.remove("glitching"));
 
                     // 3) Reconstrucción correcta: vuelven a su sitio.
