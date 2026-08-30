@@ -299,21 +299,25 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-family: "Anton", "Inter", sans-serif;
+    font-family: "Bebas Neue", "Arial Narrow", "Inter", sans-serif;
 
-    font-size: clamp(70px, 16vw, 240px);
+    font-size: clamp(76px, 17vw, 250px);
 
-    line-height: .82;
+    line-height: .78;
 
-    letter-spacing: .01em;
+    letter-spacing: .015em;
 
-    font-weight: 800;
+    font-weight: 400;
 
     text-transform: uppercase;
 
     color: #f2f1ed;
 
     text-shadow: 0 2px 22px rgba(0, 0, 0, .55);
+
+    transform: scaleY(1.06);
+
+    transform-origin: center;
 
 }
 
