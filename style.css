@@ -299,13 +299,13 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-family: "Six Caps", "Bebas Neue", "Arial Narrow", sans-serif;
+    font-family: "Jim Nightshade", "Caveat", "Six Caps", cursive;
 
-    font-size: clamp(84px, 21vw, 300px);
+    font-size: clamp(72px, 15vw, 230px);
 
-    line-height: .82;
+    line-height: .92;
 
-    letter-spacing: .03em;
+    letter-spacing: .01em;
 
     font-weight: 400;
 
