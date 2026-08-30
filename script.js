@@ -210,42 +210,6 @@ if (typeof gsap === "undefined") {
 
 
             /* =========================
-               HERO — aparición gradual del fondo.
-               Una capa negra cubre el hero y se desliza hacia arriba
-               fuera de pantalla: la imagen se va viendo de abajo
-               hacia arriba, como un desvanecido que sube.
-            ========================= */
-
-            const heroReveal = document.querySelector(".hero-reveal");
-
-
-            if (heroReveal) {
-
-                if (isReducedMotion) {
-
-                    gsap.set(heroReveal, { opacity: 0 });
-
-                } else {
-
-                    gsap.to(heroReveal, {
-
-                        yPercent: -100,
-
-                        duration: 1.8,
-
-                        ease: "power3.inOut",
-
-                        delay: .2
-
-                    });
-
-                }
-
-            }
-
-
-
-            /* =========================
                HERO — construcción caótica de "NEIYAN EUSSE."
                Las letras llegan una a una desde lugares al azar pero
                aterrizan en casillas intercambiadas (queda el texto mal
