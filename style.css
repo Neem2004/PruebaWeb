@@ -299,13 +299,13 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-family: "Bebas Neue", "Arial Narrow", "Inter", sans-serif;
+    font-family: "Six Caps", "Bebas Neue", "Arial Narrow", sans-serif;
 
-    font-size: clamp(76px, 17vw, 250px);
+    font-size: clamp(84px, 21vw, 300px);
 
-    line-height: .78;
+    line-height: .82;
 
-    letter-spacing: .015em;
+    letter-spacing: .03em;
 
     font-weight: 400;
 
