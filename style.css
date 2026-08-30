@@ -685,6 +685,8 @@ a:focus-visible,
 
     font-weight: 700;
 
+    max-width: 1180px; /* misma caja que el grid de abajo: cuadrado */
+
 }
 
 
@@ -701,59 +703,187 @@ a:focus-visible,
 
 
 /*
-   La presentación es un texto largo (6 párrafos): columna única y
-   estrecha para facilitar la lectura, dejando el lateral derecho libre
-   para la foto fundida con el fondo negro de la sección.
+   La presentación vive en una sola columna: el párrafo más grande y
+   legible, alineado con el ancho del título y dejando el lateral
+   derecho para la foto fundida con el fondo negro de la sección.
 */
 
 .about-grid {
 
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 18px;
-
     margin-top: 110px;
 
-    max-width: 720px;
+    max-width: 760px;
 
 }
 
 
 .about-copy {
 
-    font-size: 16px;
+    font-size: 18px;
 
-    line-height: 1.65;
+    line-height: 1.7;
 
-    color: #aaa;
+    color: #b6b4ad;
+
+    /* que no se corte una palabra ni queden huérfanas en el salto */
+
+    overflow-wrap: normal;
+
+    hyphens: none;
+
+    text-wrap: pretty;
+
+    orphans: 3;
+
+    widows: 3;
 
 }
 
 
-.about-copy-lead {
+/* Línea de frases del About: una sola línea con separación cómoda;
+   en pantallas estrechas se acomoda en varias líneas. */
 
-    font-size: 20px;
+.about-phrases {
 
-    line-height: 1.5;
+    margin-top: 90px;
 
-    color: #f2f1ed;
+    padding-top: 26px;
+
+    border-top: 1px solid #333;
+
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    align-items: center;
+
+    gap: clamp(14px, 2.2vw, 40px);
+
+    width: 100%;
+
+    max-width: none;
 
 }
 
 
-.about-copy-final {
+.about-phrases .marquee-item {
+
+    display: inline-flex;
+
+    font-size: clamp(13px, 1.6vw, 18px);
+
+    letter-spacing: .02em;
+
+    white-space: nowrap;
+
+}
+
+
+@media (max-width: 1199px) {
+
+    .about-phrases {
+
+        flex-wrap: wrap;
+
+        row-gap: 18px;
+
+    }
+
+    .about-phrases .marquee-item {
+
+        white-space: normal;
+
+    }
+
+}
+
+
+/* ================= MARQUESINA =================
+   Cierre de la sección ABOUT: las frases avanzan de derecha a
+   izquierda en bucle infinito. La pista contiene el set dos veces para
+   que el salto (-50%) sea invisible. by Animando render. */
+
+.marquee {
+
+    margin-top: 90px;
+
+    overflow: hidden;
+
+    border-top: 1px solid #333;
+
+    white-space: nowrap;
+
+    padding: 34px 0;
+
+}
+
+
+.marquee-track {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 3vw;
+
+    animation: marquee 28s linear infinite;
+
+    will-change: transform;
+
+}
+
+
+@keyframes marquee {
+
+    from {
+
+        transform: translateX(0);
+
+    }
+
+    to {
+
+        transform: translateX(-50%);
+
+    }
+
+}
+
+
+.marquee-item {
 
     font-family: var(--display);
 
-    font-size: 15px;
+    font-size: clamp(24px, 3vw, 40px);
 
-    letter-spacing: .05em;
+    letter-spacing: .02em;
 
     color: #f2f1ed;
 
-    margin-top: 12px;
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: .55em;
+
+}
+
+
+.marquee-ico {
+
+    width: 14px;
+
+    height: 14px;
+
+    flex: none;
+
+    fill: none;
+
+    stroke: #6a675c;
+
+    stroke-width: 1.6;
+
+    stroke-linecap: round;
 
 }
 
@@ -768,60 +898,49 @@ a:focus-visible,
 }
 
 
-.skill-list {
+/* Icono de marca a color de cada skill dentro de la marquesina. */
+
+.skill-ico {
+
+    width: 34px;
+
+    height: 34px;
+
+    flex: none;
+
+    display: block;
+
+}
+
+
+/* La sección SKILLS está sobre el fondo crema: marquesina en
+   movimiento igual que la de diseño original, con textos oscuros. */
+
+.skills .marquee {
+
+    margin-top: 40px;
 
     border-top: 1px solid var(--line);
 
-}
-
-
-.skill {
-
-    display: grid;
-
-    grid-template-columns: 8% 1fr 20%;
-
-    align-items: center;
-
-    padding: 25px 0;
-
-    border-bottom: 1px solid var(--line);
-
-    transition: padding-left .35s, background .35s;
+    padding: 34px 0;
 
 }
 
 
-.skill:hover {
+.skills .marquee-track {
 
-    padding-left: 18px;
-
-    background: #e9e8e3;
+    animation: marquee 26s linear infinite;
 
 }
 
 
-.skill span,
-.skill small {
+.skills .marquee-item {
 
-    font-family: var(--display);
+    color: var(--fg);
 
-    font-size: 10px;
+    font-size: clamp(18px, 2.1vw, 26px);
 
-    letter-spacing: .12em;
-
-    color: var(--muted);
-
-}
-
-
-.skill strong {
-
-    font-family: var(--display);
-
-    font-size: clamp(30px, 5vw, 76px);
-
-    letter-spacing: -.06em;
+    letter-spacing: .01em;
 
 }
 
@@ -1488,6 +1607,20 @@ footer {
 
 }
 
+/*
+   SplitText marca cada carácter como inline-block por defecto, y eso
+   permite al navegador PARTIR PALABRAS en cualquier punto al refluir
+   ("focuse/d", "Ja/va"). Aquí solo animamos opacidad, así que basta con
+   dejarlos inline: los caracteres vuelven a fluir como texto y los
+   saltos de línea solo ocurren entre palabras.
+*/
+
+.typing-char {
+
+    display: inline !important;
+
+}
+
 
 
 /* ================= ANIMATIONS ================= */
@@ -1514,6 +1647,14 @@ footer {
 }
 
 
+
+/* ================= TARJETAS ABOUT =================
+   Cada párrafo de la presentación vive en su tarjeta; al pasar el
+   cursor se realza con un pequeño salto y luz. También garantiza
+   palabras intactas en la caja del párrafo. El stagger de "reveal"
+   transpone sobre transform/opacity, por eso la transición base
+   preserva la entrada (.9s) y el hover la acelera a .35s.
+*/
 
 /* ================= REDUCED MOTION ================= */
 /*
@@ -1558,12 +1699,18 @@ footer {
 
 
     .circle-link,
-    .skill,
     .project,
     .project-arrow,
     .skip-link {
 
         transition: none;
+
+    }
+
+
+    .marquee-track {
+
+        animation: none;
 
     }
 
@@ -1587,23 +1734,7 @@ footer {
 
     .about-grid {
 
-        grid-template-columns: repeat(2, 1fr);
-
-        max-width: 700px;
-
-    }
-
-
-    .about-copy:nth-child(1) {
-
-        grid-column: 1 / 2;
-
-    }
-
-
-.about-copy:nth-child(2) {
-
-        grid-column: 2 / 3;
+        max-width: 720px;
 
     }
 
@@ -1682,11 +1813,16 @@ footer {
 
     .about-grid {
 
-        grid-template-columns: 1fr;
-
         margin-top: 70px;
 
-        gap: 25px;
+    }
+
+
+    .marquee {
+
+        margin-top: 60px;
+
+        padding: 26px 0;
 
     }
 
@@ -1699,23 +1835,11 @@ footer {
     }
 
 
-    .skill {
+    .skill-ico {
 
-        grid-template-columns: 12% 1fr;
+        width: 27px;
 
-    }
-
-
-    .skill small {
-
-        display: none;
-
-    }
-
-
-    .skill strong {
-
-        font-size: 12vw;
+        height: 27px;
 
     }
 

@@ -89,7 +89,7 @@ if (typeof gsap === "undefined") {
 
 
                     const interactiveElements =
-                        document.querySelectorAll("a, .project, .skill");
+                        document.querySelectorAll("a, .project");
 
 
                     const onEnterInteractive = () => gsap.to(cursor, { width: 42, height: 42, duration: .2 });
@@ -386,21 +386,24 @@ if (typeof gsap === "undefined") {
 
 
             /* =========================
-               ABOUT — TIPEO letra a letra
-               El título y los dos párrafos de "about" se escriben de
-               forma secuencial cuando la sección entra en pantalla.
+               ABOUT — entrada suave letra por letra
+               El título y los párrafos de "acerca de", más la línea de
+               frases del final, se revelan carácter a carácter con un
+               desvanecido y desenfoque suave (sin efecto de tipeo).
             ========================= */
 
             const aboutHeading = document.querySelector(".statement-title");
 
             const aboutCopies = gsap.utils.toArray(".about-copy");
 
+            const aboutPhrases = document.querySelector(".about-phrases");
 
-            if (!isReducedMotion && (aboutHeading || aboutCopies.length)) {
 
-                const aboutTargets = [aboutHeading, ...aboutCopies].filter(Boolean);
+            if (!isReducedMotion && (aboutHeading || aboutCopies.length || aboutPhrases)) {
 
-                const typingTimeline = gsap.timeline({
+                const aboutTargets = [aboutHeading, ...aboutCopies, aboutPhrases].filter(Boolean);
+
+                const entranceTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: ".statement",
                         start: "top 78%",
@@ -411,20 +414,28 @@ if (typeof gsap === "undefined") {
                 aboutTargets.forEach((target, index) => {
 
                     const split = SplitText.create(target, {
-                        type: index === 0 ? "lines, chars" : "chars",
+                        type: "chars",
                         charsClass: "typing-char"
                     });
 
                     aboutSplits.push(split);
 
-                    gsap.set(split.chars, { opacity: 0 });
+                    const isTitle = index === 0;
 
-                    typingTimeline.to(split.chars, {
-                        opacity: 1,
-                        duration: .01,
-                        ease: "none",
-                        stagger: index === 0 ? .045 : .022
-                    });
+                    const isLast = index === aboutTargets.length - 1;
+
+                    gsap.set(split.chars, isTitle ? { autoAlpha: 0, filter: "blur(3px)" } : { autoAlpha: 0 });
+
+                    entranceTimeline.to(split.chars, {
+
+                        autoAlpha: 1,
+                        filter: isTitle ? "blur(0px)" : "none",
+                        duration: isTitle ? .7 : .45,
+                        ease: "power2.out",
+                        stagger: isTitle ? .03 : isLast ? .012 : .008,
+                        delay: isLast ? .1 : 0
+
+                    }, isTitle ? 0 : isLast ? "-=0.7" : "-=0.9");
 
                 });
 
