@@ -299,7 +299,7 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-family: "Jim Nightshade", "Caveat", "Six Caps", cursive;
+    font-family: "UnifrakturMaguntia", "Jim Nightshade", "Six Caps", serif;
 
     font-size: clamp(72px, 15vw, 230px);
 
