@@ -210,6 +210,131 @@ if (typeof gsap === "undefined") {
 
 
             /* =========================
+               HERO — construcción caótica de "NEIYAN EUSSE."
+               Las letras llegan una a una desde lugares al azar pero
+               aterrizan en casillas intercambiadas (queda el texto mal
+               escrito), luego se desarma por completo y finalmente se
+               reconstruye letra por letra en su sitio correcto.
+            ========================= */
+
+            const heroTargets = gsap.utils.toArray(".split-hero");
+
+            const dot = document.querySelector(".dot");
+
+            let heroSplit = null;
+
+
+            if (heroTargets.length) {
+
+                if (isReducedMotion) {
+
+                    gsap.set(heroTargets, { opacity: 1 });
+
+                    if (dot) gsap.set(dot, { opacity: 1 });
+
+                } else {
+
+                    heroSplit = SplitText.create(heroTargets, {
+                        type: "chars",
+                        charsClass: "hero-char"
+                    });
+
+                    const chars = heroSplit.chars;
+
+                    /* Medir el layout ANTES de transformar nada: cada rect
+                       es la "casilla" donde esa letra debe quedar. */
+                    const homeRects = chars.map((char) => char.getBoundingClientRect());
+
+                    const landAt = (fromIndex, toIndex) => ({
+                        x: homeRects[toIndex].left - homeRects[fromIndex].left,
+                        y: homeRects[toIndex].top - homeRects[fromIndex].top
+                    });
+
+                    /* Baraja los destinos: es lo que produce el texto mal
+                       escrito en el primer intento de construcción. */
+                    const slotOrder = chars.map((_, index) => index);
+
+                    for (let i = slotOrder.length - 1; i > 0; i--) {
+
+                        const j = Math.floor(Math.random() * (i + 1));
+
+                        [slotOrder[i], slotOrder[j]] = [slotOrder[j], slotOrder[i]];
+
+                    }
+
+                    // Estado inicial: invisible, cada letra en un punto al azar.
+                    gsap.set(chars, {
+
+                        opacity: 0,
+
+                        x: () => gsap.utils.random(-520, 520),
+                        y: () => gsap.utils.random(-360, 360),
+
+                        rotate: () => gsap.utils.random(-180, 180),
+
+                        scale: () => gsap.utils.random(.4, 1.7)
+
+                    });
+
+                    const buildTimeline = gsap.timeline({ delay: .2 });
+
+                    // 1) Intento fallido: aterrizan en casillas ajenas.
+                    buildTimeline.to(chars, {
+
+                        opacity: 1,
+                        scale: 1,
+                        duration: .8,
+                        ease: "power3.out",
+                        stagger: { each: .055, from: "random" },
+
+                        x: (index) => landAt(index, slotOrder[index]).x,
+                        y: (index) => landAt(index, slotOrder[index]).y,
+
+                        rotate: () => gsap.utils.random(-16, 16)
+
+                    });
+
+                    // Pausa para leer el desorden.
+                    buildTimeline.to({}, { duration: .7 });
+
+                    // 2) Desarme total: salen volando y se pierden en el aire.
+                    buildTimeline.to(chars, {
+
+                        opacity: 0,
+                        scale: .6,
+                        duration: .5,
+                        ease: "power2.in",
+                        stagger: { each: .03, from: "random" },
+
+                        x: () => gsap.utils.random(-520, 520),
+                        y: () => gsap.utils.random(-360, 360),
+
+                        rotate: () => gsap.utils.random(-220, 220)
+
+                    });
+
+                    // 3) Reconstrucción correcta: vuelven a su sitio.
+                    buildTimeline.to(chars, {
+
+                        opacity: 1,
+                        x: 0,
+                        y: 0,
+                        rotate: 0,
+                        scale: 1,
+                        duration: 1,
+                        ease: "elastic.out(1, .5)",
+
+                        stagger: .07
+
+                    });
+
+                }
+
+            }
+
+
+
+            /* =========================
                SCROLL REVEAL (resto de elementos con clase "reveal")
                Sin cambios de fondo respecto a la versión anterior.
             ========================= */
@@ -781,6 +906,8 @@ if (typeof gsap === "undefined") {
             return () => {
 
                 cleanupFns.forEach((fn) => fn());
+
+                if (heroSplit) heroSplit.revert();
 
                 aboutSplits.forEach((split) => split.revert());
 

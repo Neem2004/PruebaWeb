@@ -299,19 +299,34 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-size: clamp(64px, 14vw, 220px);
+    font-family: "Anton", "Inter", sans-serif;
+
+    font-size: clamp(70px, 16vw, 240px);
 
     line-height: .82;
 
-    letter-spacing: -.06em;
+    letter-spacing: .01em;
 
-    font-weight: 900;
+    font-weight: 800;
 
     text-transform: uppercase;
 
     color: #f2f1ed;
 
     text-shadow: 0 2px 22px rgba(0, 0, 0, .55);
+
+}
+
+
+.hero-char {
+
+    display: inline-block;
+
+    transform-style: preserve-3d;
+
+    backface-visibility: hidden;
+
+    will-change: transform, opacity, filter;
 
 }
 
