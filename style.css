@@ -310,6 +310,8 @@ a:focus-visible,
 
     background-repeat: no-repeat;
 
+    opacity: .35;
+
     will-change: transform, filter;
 
 }
@@ -699,23 +701,22 @@ a:focus-visible,
 
 
 /*
-   El indent original se lograba con "margin-left: 34%", un valor mágico
-   que se rompe si cambia el contenido o el viewport. Con grid, la
-   primera columna queda vacía y actúa como el mismo indentado visual,
-   pero escala de forma predecible en cualquier ancho.
+   La presentación es un texto largo (6 párrafos): columna única y
+   estrecha para facilitar la lectura, dejando el lateral derecho libre
+   para la foto fundida con el fondo negro de la sección.
 */
 
 .about-grid {
 
-    display: grid;
+    display: flex;
 
-    grid-template-columns: repeat(3, 1fr);
+    flex-direction: column;
 
-    gap: 6vw;
+    gap: 18px;
 
     margin-top: 110px;
 
-    max-width: 1100px;
+    max-width: 720px;
 
 }
 
@@ -731,16 +732,28 @@ a:focus-visible,
 }
 
 
-.about-copy:nth-child(1) {
+.about-copy-lead {
 
-    grid-column: 2 / 3;
+    font-size: 20px;
+
+    line-height: 1.5;
+
+    color: #f2f1ed;
 
 }
 
 
-.about-copy:nth-child(2) {
+.about-copy-final {
 
-    grid-column: 3 / 4;
+    font-family: var(--display);
+
+    font-size: 15px;
+
+    letter-spacing: .05em;
+
+    color: #f2f1ed;
+
+    margin-top: 12px;
 
 }
 
@@ -1066,6 +1079,8 @@ a:focus-visible,
 
 .contact {
 
+    position: relative;
+
     min-height: 90svh;
 
     background: #111;
@@ -1081,17 +1096,240 @@ a:focus-visible,
 }
 
 
+/* Araña decorativa: anclada a la esquina superior derecha, ocupa
+   aproximadamente un tercio del ancho. Con screen-blend el negro de la
+   imagen desaparece y solo se ve el trazo claro sobre el fondo oscuro.
+   "como la imagen yo": fondo fundido, sin ojos de alt, decorativa. */
+
+.spider-photo {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 0;
+
+    width: min(30vw, 430px);
+
+    z-index: 0;
+
+    mix-blend-mode: screen;
+
+    opacity: .7;
+
+    pointer-events: none;
+
+    -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent);
+
+    mask-image: linear-gradient(to bottom, #000 68%, transparent);
+
+}
+
+
+.spider-photo img {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+}
+
+
+/* Glitch RGB de la araña: dos copias (roja y cian) con el mismo trazo,
+   aparecen en ráfagas breves con desplazamientos opuestos. Cíclico. */
+
+.spider-photo::before,
+.spider-photo::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background: url("img/spider.png") center / cover no-repeat;
+
+    mix-blend-mode: screen;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    will-change: transform, opacity;
+
+}
+
+
+.spider-photo::before {
+
+    animation: spider-glitch-r 6s step-start infinite;
+
+}
+
+
+.spider-photo::after {
+
+    animation: spider-glitch-b 6s step-start infinite;
+
+}
+
+
+@keyframes spider-glitch-r {
+
+    0%,
+
+    6%,
+
+    42%,
+
+    48%,
+
+    78%,
+
+    84%,
+
+    100% {
+
+        opacity: 0;
+
+        transform: none;
+
+    }
+
+    3% {
+
+        opacity: .55;
+
+        transform: translateX(-6px);
+
+    }
+
+    4% {
+
+        opacity: .65;
+
+        transform: translateX(-14px) translateY(3px);
+
+    }
+
+    45% {
+
+        opacity: .5;
+
+        transform: translateX(-10px);
+
+    }
+
+    81% {
+
+        opacity: .6;
+
+        transform: translateX(-16px) translateY(-3px);
+
+    }
+
+    83% {
+
+        opacity: .4;
+
+        transform: translateX(-5px);
+
+    }
+
+}
+
+
+@keyframes spider-glitch-b {
+
+    0%,
+
+    6%,
+
+    42%,
+
+    48%,
+
+    78%,
+
+    84%,
+
+    100% {
+
+        opacity: 0;
+
+        transform: none;
+
+    }
+
+    3% {
+
+        opacity: .45;
+
+        transform: translateX(8px);
+
+    }
+
+    4% {
+
+        opacity: .55;
+
+        transform: translateX(15px) translateY(-3px);
+
+    }
+
+    45% {
+
+        opacity: .4;
+
+        transform: translateX(11px);
+
+    }
+
+    81% {
+
+        opacity: .5;
+
+        transform: translateX(17px) translateY(3px);
+
+    }
+
+    83% {
+
+        opacity: .35;
+
+        transform: translateX(6px);
+
+    }
+
+}
+
+
+.contact .eyebrow,
+.contact-title,
+.contact-bottom {
+
+    position: relative;
+
+    z-index: 1;
+
+}
+
+
 .contact-title {
 
     font-family: var(--display);
 
-    font-size: clamp(70px, 14vw, 220px);
+    font-size: clamp(48px, 9vw, 148px);
 
-    line-height: .78;
+    line-height: .8;
 
-    letter-spacing: -.09em;
+    letter-spacing: -.04em;
 
     margin: auto 0;
+
+    max-width: 66%;
 
 }
 
@@ -1130,9 +1368,9 @@ a:focus-visible,
 
     justify-content: center;
 
-    width: 44px;
+    width: 100px;
 
-    height: 44px;
+    height: 100px;
 
     border: 1px solid #888;
 
@@ -1146,6 +1384,17 @@ a:focus-visible,
         color .3s,
         border-color .3s,
         transform .3s;
+
+}
+
+
+.socials a svg {
+
+    width: 100px;
+
+    height: 100px;
+
+    display: block;
 
 }
 
@@ -1315,6 +1564,16 @@ footer {
     .skip-link {
 
         transition: none;
+
+    }
+
+
+    .spider-photo::before,
+    .spider-photo::after {
+
+        animation: none;
+
+        opacity: 0;
 
     }
 
@@ -1547,6 +1806,13 @@ footer {
     .socials {
 
         margin-top: 30px;
+
+    }
+
+
+    .spider-photo {
+
+        display: none;
 
     }
 
