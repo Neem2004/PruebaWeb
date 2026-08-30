@@ -291,6 +291,17 @@ a:focus-visible,
 
     background-color: #000;
 
+}
+
+
+.hero-bg {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 0;
+
     background-image: url("img/fondo.png");
 
     background-size: cover;
@@ -298,6 +309,80 @@ a:focus-visible,
     background-position: center;
 
     background-repeat: no-repeat;
+
+    will-change: transform, clip-path, filter;
+
+}
+
+
+.hero-bg.glitching {
+
+    animation: hero-glitch .3s steps(1) infinite;
+
+}
+
+
+@keyframes hero-glitch {
+
+    0% {
+
+        clip-path: inset(0 0 86% 0);
+
+        transform: translate(-18px, 6px) skewX(-3deg);
+
+        filter: brightness(1.8) contrast(2) saturate(0);
+
+    }
+
+    20% {
+
+        clip-path: inset(45% 0 30% 0);
+
+        transform: translate(22px, -10px) skewX(4deg);
+
+        filter: brightness(2.4) contrast(2.4) saturate(0);
+
+    }
+
+    40% {
+
+        clip-path: inset(12% 0 60% 0);
+
+        transform: translate(-26px, 2px);
+
+        filter: brightness(1.6) contrast(1.8) saturate(0);
+
+    }
+
+    60% {
+
+        clip-path: inset(70% 0 8% 0);
+
+        transform: translate(30px, 8px) skewX(-2deg);
+
+        filter: brightness(2.2) contrast(2.2) saturate(0);
+
+    }
+
+    80% {
+
+        clip-path: inset(0 0 0 0);
+
+        transform: translate(-12px, -6px) skewX(5deg);
+
+        filter: brightness(2.8) contrast(3) saturate(0);
+
+    }
+
+    100% {
+
+        clip-path: inset(30% 0 40% 0);
+
+        transform: translate(14px, 0);
+
+        filter: brightness(2) contrast(2.2) saturate(0);
+
+    }
 
 }
 

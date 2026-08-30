@@ -257,6 +257,8 @@ if (typeof gsap === "undefined") {
 
             const dot = document.querySelector(".dot");
 
+            const heroBg = document.querySelector(".hero-bg");
+
             let heroSplit = null;
 
 
@@ -330,6 +332,12 @@ if (typeof gsap === "undefined") {
 
                     });
 
+                    // GLITCH del fondo: sincronizado con el timeline. Se activa
+                    // en cuanto el título queda mal armado y permanece durante
+                    // toda la estancia en desorden y el desarme, hasta el
+                    // instante exacto en que empieza a reconstruirse.
+                    buildTimeline.call(() => heroBg && heroBg.classList.add("glitching"));
+
                     // Pausa para leer el desorden.
                     buildTimeline.to({}, { duration: .7 });
 
@@ -348,6 +356,10 @@ if (typeof gsap === "undefined") {
                         rotate: () => gsap.utils.random(-220, 220)
 
                     });
+
+                    // Se quita el glitch justo antes de la reconstrucción:
+                    // corte duro y el título vuelve a armarse ya limpio.
+                    buildTimeline.call(() => heroBg && heroBg.classList.remove("glitching"));
 
                     // 3) Reconstrucción correcta: vuelven a su sitio.
                     buildTimeline.to(chars, {
