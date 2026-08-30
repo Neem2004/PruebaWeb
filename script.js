@@ -349,17 +349,52 @@ if (typeof gsap === "undefined") {
 
             /* =========================
                SCROLL REVEAL (resto de elementos con clase "reveal")
-               Sin cambios de fondo respecto a la versión anterior.
+               Los subtítulos "01 — ABOUT"… se excluyen de aquí: tienen su
+               propio bloque que entra justo antes que el contenido.
             ========================= */
 
-            const revealElements = gsap.utils.toArray(".reveal");
+            const revealElements = gsap.utils
+                .toArray(".reveal")
+                .filter((element) => !element.classList.contains("eyebrow"))
+                .filter((element) => !element.matches(".statement-title, .about-copy"));
 
 
             if (isReducedMotion) {
 
                 gsap.set(revealElements, { opacity: 1, y: 0 });
 
+                gsap.set(".eyebrow", { autoAlpha: 1, y: 0 });
+
+                /* Título y párrafo del About: dejan el reveal genérico y
+                   viven solo del timeline de palabras; sin mover, siempre
+                   visibles. */
+                gsap.set(".statement-title, .about-copy", { opacity: 1, y: 0 });
+
             } else {
+
+                /* Subtítulos de sección: aparecen primero, apenas la
+                   sección se asoma en el scroll. El trigger va atado a
+                   la sección (el padding superior los descuelga). */
+                gsap.utils.toArray(".eyebrow").forEach((eyebrow) => {
+
+                    const section = eyebrow.parentElement;
+
+                    gsap.fromTo(eyebrow, { autoAlpha: 0, y: 10 }, {
+
+                        autoAlpha: 1,
+                        y: 0,
+                        duration: .45,
+                        ease: "power2.out",
+
+                        scrollTrigger: {
+                            trigger: section,
+                            start: "top 96%",
+                            once: true
+                        }
+
+                    });
+
+                });
 
                 revealElements.forEach((element, index) => {
 
@@ -381,15 +416,76 @@ if (typeof gsap === "undefined") {
 
                 });
 
+/* Marquesina de skills: arranca desplazada a la derecha
+                   (nada visible) y, cuando la sección entra en pantalla,
+                   entra en barrido con el mismo movimiento de marquesina:
+                   se desliza de derecha a izquierda sin entrada especial
+                   por items, y al terminar su primera pasada se hace cargo
+                   el loop CSS de siempre. */
+                const skillsTrack = document.querySelector(".skills .marquee-track");
+
+                const skillsMarquee = document.querySelector(".skills .marquee");
+
+                if (skillsTrack && skillsMarquee) {
+
+                    const distance = skillsMarquee.offsetWidth;
+
+                    /* Quita el loop CSS mientras hace la pasada de entrada:
+                       los transforms la manejamos a mano esos segundos. */
+                    skillsTrack.style.animation = "none";
+
+                    gsap.set(skillsTrack, { x: distance });
+
+                    ScrollTrigger.create({
+
+                        trigger: ".skills",
+                        start: "top 75%",
+                        once: true,
+
+                        onEnter: () => {
+
+                            /* Velocidad real del loop de la marquesina:
+                               recorre medio de la pista (un juego completo
+                               de 12 items) en 26 segundos. Se mide aquí,
+                               con las fuentes ya cargadas, para que la
+                               entrada barra a ese mismo ritmo exacto. */
+                            const loopSpeed = (skillsTrack.offsetWidth / 2) / 26;
+
+                            gsap.to(skillsTrack, {
+
+                                x: 0,
+                                duration: distance / loopSpeed,
+                                ease: "none",
+
+                                onComplete: () => {
+
+                                    /* Traspaso al loop de marquesina normal,
+                                       ya en la posición de arranque (x:0). */
+                                    skillsTrack.style.animation = "marquee 26s linear infinite";
+
+                                    skillsTrack.style.animationPlayState = "running";
+
+                                }
+
+                            });
+
+                        }
+
+                    });
+
+                }
+
             }
 
 
 
             /* =========================
-               ABOUT — entrada suave letra por letra
-               El título y los párrafos de "acerca de", más la línea de
-               frases del final, se revelan carácter a carácter con un
-               desvanecido y desenfoque suave (sin efecto de tipeo).
+               ABOUT — entrada en orden, palabra por palabra
+               Se revela en secuencia estricta: el título palabra por
+               palabra, luego los párrafos palabra por palabra y al final
+               la línea de frases — los tres con la misma animación:
+               desvanecido + subida + desenfoque suave al entrar la
+               sección en el scroll (sin efecto de tipeo).
             ========================= */
 
             const aboutHeading = document.querySelector(".statement-title");
@@ -401,8 +497,6 @@ if (typeof gsap === "undefined") {
 
             if (!isReducedMotion && (aboutHeading || aboutCopies.length || aboutPhrases)) {
 
-                const aboutTargets = [aboutHeading, ...aboutCopies, aboutPhrases].filter(Boolean);
-
                 const entranceTimeline = gsap.timeline({
                     scrollTrigger: {
                         trigger: ".statement",
@@ -411,33 +505,85 @@ if (typeof gsap === "undefined") {
                     }
                 });
 
-                aboutTargets.forEach((target, index) => {
+                /* Animación que comparten los tres grupos: misma suavidad,
+                   mismos tiempos, mismo efecto de desenfoque. */
+                const entranceConfig = {
 
-                    const split = SplitText.create(target, {
-                        type: "chars",
-                        charsClass: "typing-char"
+                    autoAlpha: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    duration: .55,
+                    ease: "power2.out",
+                    stagger: .12
+
+                };
+
+                const entranceFrom = { autoAlpha: 0, y: 14, filter: "blur(4px)" };
+
+                /* El título y los párrafos llevan la clase .reveal (opacity 0
+                   y translateY iniciales). Como ya no los toca el reveal
+                   genérico — para evitar que dos animaciones chocaron —, y
+                   aquí solo se animan las PALABRAS, el contenedor queda
+                   quieto y plenamente visible. */
+                if (aboutHeading) gsap.set(aboutHeading, { opacity: 1, y: 0 });
+
+                aboutCopies.forEach((copy) => gsap.set(copy, { opacity: 1, y: 0 }));
+
+                /* 1) Título — palabra por palabra. */
+                if (aboutHeading) {
+
+                    const split = SplitText.create(aboutHeading, {
+                        type: "words",
+                        wordsClass: "about-word"
                     });
 
                     aboutSplits.push(split);
 
-                    const isTitle = index === 0;
+                    gsap.set(split.words, entranceFrom);
 
-                    const isLast = index === aboutTargets.length - 1;
+                    entranceTimeline.to(split.words, entranceConfig);
 
-                    gsap.set(split.chars, isTitle ? { autoAlpha: 0, filter: "blur(3px)" } : { autoAlpha: 0 });
+                }
 
-                    entranceTimeline.to(split.chars, {
+                /* 2) Párrafos — palabra por palabra, después del título. El texto
+                   es más largo, así que cada palabra avanza más rápido
+                   para terminar al mismo tiempo que el título. */
+                aboutCopies.forEach((copy) => {
 
-                        autoAlpha: 1,
-                        filter: isTitle ? "blur(0px)" : "none",
-                        duration: isTitle ? .7 : .45,
-                        ease: "power2.out",
-                        stagger: isTitle ? .03 : isLast ? .012 : .008,
-                        delay: isLast ? .1 : 0
+                    const split = SplitText.create(copy, {
+                        type: "words",
+                        wordsClass: "about-word"
+                    });
 
-                    }, isTitle ? 0 : isLast ? "-=0.7" : "-=0.9");
+                    aboutSplits.push(split);
+
+                    gsap.set(split.words, entranceFrom);
+
+                    entranceTimeline.to(split.words, {
+
+                        ...entranceConfig,
+                        stagger: .022
+
+                    });
 
                 });
+
+                /* 3) Línea de frases — al final, después de las dos
+                   anteriores, con la misma animación. */
+                if (aboutPhrases) {
+
+                    const split = SplitText.create(aboutPhrases, {
+                        type: "words",
+                        wordsClass: "about-word"
+                    });
+
+                    aboutSplits.push(split);
+
+                    gsap.set(split.words, entranceFrom);
+
+                    entranceTimeline.to(split.words, entranceConfig);
+
+                }
 
             }
 
@@ -485,223 +631,86 @@ if (typeof gsap === "undefined") {
 
 
             /* =========================
-               EDUCACIÓN — letras dispersas que se ordenan
-               Los títulos muestran sus caracteres desordenados y
-               esparcidos; al entrar en pantalla cada letra vuelve a
-               su sitio con un rebote elástico.
-            ========================= */
-
-            const eduTitles = gsap.utils.toArray(".edu-row h3");
-
-
-            if (eduTitles.length && !isReducedMotion) {
-
-                eduTitles.forEach((title) => {
-
-                    const split = SplitText.create(title, {
-                        type: "chars",
-                        charsClass: "edu-char"
-                    });
-
-                    eduSplits.push(split);
-
-                    gsap.set(split.chars, {
-
-                        opacity: 0,
-
-                        x: () => gsap.utils.random(-70, 70),
-                        y: () => gsap.utils.random(-25, 25),
-
-                        rotate: () => gsap.utils.random(-130, 130),
-
-                        scale: () => gsap.utils.random(.5, 1.7),
-
-                        filter: "blur(3px)"
-
-                    });
-
-                    gsap.to(split.chars, {
-
-                        opacity: 1,
-                        x: 0,
-                        y: 0,
-                        rotate: 0,
-                        scale: 1,
-                        filter: "blur(0px)",
-
-                        duration: 1.2,
-                        ease: "elastic.out(1, .45)",
-
-                        stagger: {
-                            each: .035,
-                            from: "random"
-                        },
-
-                        scrollTrigger: {
-                            trigger: title,
-                            start: "top 88%",
-                            once: true
-                        }
-
-                    });
-
-                });
-
-            }
-
-
-
-            /* =========================
-               CONTACT — caos que se ordena, con personalidad por letra
-               (la animación que antes era el intro del hero): cada
-               carácter arranca disperso en el aire y converge a su sitio
-               con estilos distintos (rebote elástico, frenazo seco,
-               overshoot, caída pesada) al entrar en pantalla.
+               CONTACT — entrada única y armoniosa
+               Título, correo/teléfono, iconos de redes y la araña entran
+               con el MISMO lenguaje visual (desvanecido suave, onda letra
+               a letra) a medida que la sección aparece en el scroll.
             ========================= */
 
             const contactHeading = document.querySelector(".contact-title");
 
-
-            if (contactHeading) {
-
-                if (isReducedMotion) {
-
-                    gsap.set(contactHeading, { opacity: 1 });
-
-                } else {
-
-                    const split = SplitText.create(contactHeading, {
-                        type: "lines, chars",
-                        charsClass: "contact-char"
-                    });
-
-                    contactSplits.push(split);
-
-                    gsap.set(contactHeading, { opacity: 1 });
-
-                    const chars = split.chars;
-
-                    // Estado inicial: dispersión aleatoria compartida por
-                    // todas las letras (esto define el "caos" del que parten).
-                    gsap.set(chars, {
-
-                        opacity: 0,
-
-                        x: () => gsap.utils.random(-260, 260),
-                        y: () => gsap.utils.random(-180, 180),
-
-                        rotate: () => gsap.utils.random(-140, 140),
-                        rotateX: () => gsap.utils.random(-90, 90),
-                        rotateY: () => gsap.utils.random(-90, 90),
-
-                        scale: () => gsap.utils.random(0.25, 2.1),
-
-                        filter: "blur(5px)"
-
-                    });
-
-                    // Cuatro "personalidades" de llegada.
-                    const variants = [
-
-                        { ease: "elastic.out(1, .55)", duration: 1.5 },   // rebote
-                        { ease: "expo.out",            duration: 1  },   // frenazo seco
-                        { ease: "back.out(2.4)",       duration: 1.25 },   // overshoot
-                        { ease: "power4.out",          duration: 1.45 }    // caída pesada
-
-                    ];
-
-                    // Baraja los chars (Fisher-Yates) antes de repartirlos
-                    // entre variantes.
-                    const shuffled = [...chars];
-
-                    for (let i = shuffled.length - 1; i > 0; i--) {
-
-                        const j = Math.floor(Math.random() * (i + 1));
-
-                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-
-                    }
-
-                    const groups = variants.map(() => []);
-
-                    shuffled.forEach((char, index) => {
-
-                        groups[index % variants.length].push(char);
-
-                    });
-
-                    groups.forEach((group, index) => {
-
-                        if (!group.length) return;
-
-                        const { ease, duration } = variants[index];
-
-                        gsap.to(group, {
-
-                            opacity: 1,
-                            x: 0,
-                            y: 0,
-                            rotate: 0,
-                            rotateX: 0,
-                            rotateY: 0,
-                            scale: 1,
-                            filter: "blur(0px)",
-
-                            duration,
-                            ease,
-
-                            stagger: {
-                                each: .04,
-                                from: "random"
-                            },
-
-                            // Pequeño desfase aleatorio por grupo para que
-                            // los cuatro estilos no arranquen a la vez.
-                            delay: .15 + gsap.utils.random(0, .12),
-
-                            scrollTrigger: {
-                                trigger: contactHeading,
-                                start: "top 80%",
-                                once: true
-                            }
-
-                        });
-
-                    });
-
-                }
-
-            }
-
-
-
-            /* =========================
-               CONTACT INFO — email y teléfono dinámicos
-               Se escriben letra a letra al llegar a la sección, y los
-               iconos de redes entran con un rebote elástico.
-            ========================= */
-
             const contactLinks = gsap.utils.toArray(".contact-info a");
 
+            const socialIcons = gsap.utils.toArray(".socials a");
 
-            if (contactLinks.length) {
+            const spiderContact = document.querySelector(".spider-photo");
+
+
+            if (contactHeading || contactLinks.length || socialIcons.length || spiderContact) {
 
                 if (isReducedMotion) {
 
-                    gsap.set(contactLinks, { autoAlpha: 1 });
+                    gsap.set([contactHeading, contactLinks, socialIcons], { opacity: 1 });
+
+                    if (spiderContact) gsap.set(spiderContact, { opacity: .7, y: 0 });
 
                 } else {
 
-                    const typingTimeline = gsap.timeline({
-                        delay: .3,
+                    const contactTimeline = gsap.timeline({
                         scrollTrigger: {
-                            trigger: ".contact-bottom",
-                            start: "top 94%",
+                            trigger: ".contact",
+                            start: "top 78%",
                             once: true
                         }
                     });
 
-                    contactLinks.forEach((link) => {
+                    /* Araña: aparece desde arriba deslizándose hacia su sitio, junto con
+                       la llegada de la sección. Arranca bien por encima
+                       para que el descenso se note de arriba hacia abajo. */
+                    if (spiderContact) {
+
+                        gsap.set(spiderContact, { opacity: 0, y: -80 });
+
+                        contactTimeline.to(spiderContact, {
+
+                            opacity: .7,
+                            y: 0,
+                            duration: 1.1,
+                            ease: "power2.out"
+
+                        });
+
+                    }
+
+                    /* Título: misma onda suave letra por letra del About. */
+                    if (contactHeading) {
+
+                        gsap.set(contactHeading, { opacity: 1 });
+
+                        const split = SplitText.create(contactHeading, {
+                            type: "chars",
+                            charsClass: "contact-char"
+                        });
+
+                        contactSplits.push(split);
+
+                        gsap.set(split.chars, { autoAlpha: 0, filter: "blur(3px)" });
+
+                        contactTimeline.to(split.chars, {
+
+                            autoAlpha: 1,
+                            filter: "blur(0px)",
+                            duration: .7,
+                            ease: "power2.out",
+                            stagger: .03
+
+                        }, spiderContact ? "-=0.5" : 0);
+
+                    }
+
+                    /* Correo y teléfono: se revelan letra a letra (sin
+                       efecto de tipeo), igual que el párrafo del About. */
+                    contactLinks.forEach((link, index) => {
 
                         const split = SplitText.create(link, {
                             type: "chars",
@@ -712,48 +721,34 @@ if (typeof gsap === "undefined") {
 
                         gsap.set(split.chars, { autoAlpha: 0 });
 
-                        typingTimeline.to(split.chars, {
+                        contactTimeline.to(split.chars, {
+
                             autoAlpha: 1,
-                            duration: .01,
-                            ease: "none",
-                            stagger: .04
-                        });
+                            duration: .45,
+                            ease: "power2.out",
+                            stagger: .008
+
+                        }, index === 0 ? "-=0.7" : "-=0.5");
 
                     });
 
-                }
+                    /* Iconos de redes: entran de uno en uno con el mismo
+                       fade suave (cada uno es "una letra" del conjunto). */
+                    if (socialIcons.length) {
 
-            }
+                        gsap.set(socialIcons, { autoAlpha: 0, y: 14 });
 
+                        contactTimeline.to(socialIcons, {
 
-            const socialIcons = gsap.utils.toArray(".socials a");
+                            autoAlpha: 1,
+                            y: 0,
+                            duration: .6,
+                            ease: "power2.out",
+                            stagger: .12
 
+                        }, "-=0.6");
 
-            if (socialIcons.length) {
-
-                if (isReducedMotion) {
-
-                    gsap.set(socialIcons, { autoAlpha: 1 });
-
-                } else {
-
-                    gsap.from(socialIcons, {
-
-                        autoAlpha: 0,
-                        scale: .4,
-                        rotate: -25,
-                        duration: .6,
-                        ease: "elastic.out(1, .5)",
-                        stagger: .12,
-                        delay: .2,
-
-                        scrollTrigger: {
-                            trigger: ".contact-bottom",
-                            start: "top 92%",
-                            once: true
-                        }
-
-                    });
+                    }
 
                 }
 

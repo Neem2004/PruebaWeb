@@ -550,7 +550,8 @@ a:focus-visible,
 
 .typing-char,
 .edu-char,
-.contact-char {
+.contact-char,
+.about-word {
 
     display: inline-block;
 
@@ -931,6 +932,11 @@ a:focus-visible,
 
     animation: marquee 26s linear infinite;
 
+    /* Arranca pausado; script.js la pone en marcha cuando la sección
+       entra en pantalla para que el barrido empiece ahí (derecha→izq). */
+
+    animation-play-state: paused;
+
 }
 
 
@@ -1158,7 +1164,7 @@ a:focus-visible,
 }
 
 
-.edu-row > span {
+.edu-row .edu-date {
 
     font-family: var(--display);
 
@@ -1167,6 +1173,45 @@ a:focus-visible,
     letter-spacing: .12em;
 
     color: var(--muted);
+
+}
+
+
+.edu-inner {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 24px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.edu-inner > div {
+
+    flex: 1 1 0;
+
+    min-width: 0;
+
+}
+
+
+.edu-logo {
+
+    display: block;
+
+    flex: 0 0 auto;
+
+    width: clamp(46px, 6.5vw, 92px);
+
+    height: auto;
+
+    filter: none;
 
 }
 
