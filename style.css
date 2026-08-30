@@ -12,6 +12,9 @@
     --muted: #777;
     --line: #c9c8c3;
 
+    --display: "Bruno Ace SC", "Inter", sans-serif;
+    --body: "Inter", Arial, sans-serif;
+
 }
 
 
@@ -22,7 +25,7 @@ html {
 
 body {
 
-    font-family: "Inter", Arial, sans-serif;
+    font-family: var(--body);
 
     background: var(--bg);
 
@@ -211,6 +214,8 @@ a:focus-visible,
 
 .logo {
 
+    font-family: var(--display);
+
     font-weight: 900;
 
     font-size: 22px;
@@ -226,6 +231,8 @@ a:focus-visible,
 
     gap: 28px;
 
+    font-family: var(--display);
+
     font-size: 10px;
 
     font-weight: 700;
@@ -236,6 +243,8 @@ a:focus-visible,
 
 
 .status {
+
+    font-family: var(--display);
 
     font-size: 9px;
 
@@ -299,11 +308,11 @@ a:focus-visible,
 
     z-index: 1;
 
-    font-family: "UnifrakturMaguntia", "Jim Nightshade", "Six Caps", serif;
+    font-family: var(--display);
 
-    font-size: clamp(72px, 15vw, 230px);
+    font-size: clamp(44px, 10vw, 150px);
 
-    line-height: .92;
+    line-height: .85;
 
     letter-spacing: .01em;
 
@@ -366,6 +375,8 @@ a:focus-visible,
     display: flex;
 
     justify-content: space-between;
+
+    font-family: var(--display);
 
     font-size: 10px;
 
@@ -438,6 +449,8 @@ a:focus-visible,
 
 .eyebrow {
 
+    font-family: var(--display);
+
     font-size: 10px;
 
     letter-spacing: .15em;
@@ -505,6 +518,8 @@ a:focus-visible,
 
 .statement-title {
 
+    font-family: var(--display);
+
     font-size: clamp(52px, 8.4vw, 135px);
 
     line-height: .88;
@@ -519,7 +534,9 @@ a:focus-visible,
 .statement-title em,
 .contact-title em {
 
-    font-family: Georgia, serif;
+    font-family: var(--display);
+
+    font-style: normal;
 
     font-weight: 400;
 
@@ -619,6 +636,8 @@ a:focus-visible,
 .skill span,
 .skill small {
 
+    font-family: var(--display);
+
     font-size: 10px;
 
     letter-spacing: .12em;
@@ -629,6 +648,8 @@ a:focus-visible,
 
 
 .skill strong {
+
+    font-family: var(--display);
 
     font-size: clamp(30px, 5vw, 76px);
 
@@ -659,6 +680,8 @@ a:focus-visible,
 
 
 .projects-head p:last-child {
+
+    font-family: var(--display);
 
     font-size: 10px;
 
@@ -698,6 +721,8 @@ a:focus-visible,
 
 .project-number {
 
+    font-family: var(--display);
+
     font-size: 10px;
 
     color: var(--muted);
@@ -706,6 +731,8 @@ a:focus-visible,
 
 
 .project-info h3 {
+
+    font-family: var(--display);
 
     font-size: clamp(32px, 6vw, 88px);
 
@@ -743,6 +770,8 @@ a:focus-visible,
 
 
 .tags span {
+
+    font-family: var(--display);
 
     border: 1px solid #aaa;
 
@@ -844,6 +873,8 @@ a:focus-visible,
 
 .edu-row > span {
 
+    font-family: var(--display);
+
     font-size: 10px;
 
     letter-spacing: .12em;
@@ -854,6 +885,8 @@ a:focus-visible,
 
 
 .edu-row h3 {
+
+    font-family: var(--display);
 
     font-size: clamp(25px, 4vw, 60px);
 
@@ -895,6 +928,8 @@ a:focus-visible,
 
 .contact-title {
 
+    font-family: var(--display);
+
     font-size: clamp(70px, 14vw, 220px);
 
     line-height: .78;
@@ -913,6 +948,8 @@ a:focus-visible,
     justify-content: space-between;
 
     align-items: end;
+
+    font-family: var(--display);
 
     font-size: 11px;
 
@@ -1020,6 +1057,8 @@ footer {
     display: flex;
 
     justify-content: space-between;
+
+    font-family: var(--display);
 
     font-size: 8px;
 
@@ -1157,7 +1196,7 @@ footer {
 
     .hero-title {
 
-        font-size: clamp(56px, 13vw, 160px);
+        font-size: clamp(40px, 9vw, 110px);
 
     }
 
