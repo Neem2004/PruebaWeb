@@ -24,152 +24,7 @@ if (typeof gsap === "undefined") {
     gsap.registerPlugin(ScrollTrigger, SplitText);
 
 
-    /* =========================
-       HERO PARTICLES (tsParticles — path "branches")
-       Se lanzan después de que termina la secuencia build/unbuild del
-       título. Si los CDN de tsParticles no cargan o el usuario prefiere
-       menos movimiento, se omiten en silencio.
-    ========================= */
-
-    async function initHeroParticles() {
-
-        if (
-            typeof window.tsParticles === "undefined" ||
-            typeof window.loadFull === "undefined" ||
-            typeof window.loadHexColorPlugin === "undefined" ||
-            typeof window.loadMovePlugin === "undefined" ||
-            typeof window.loadBranchesPath === "undefined" ||
-            window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ) {
-            return;
-        }
-
-        const container = document.getElementById("hero-particles");
-
-        if (!container) return;
-
-        await window.loadFull(window.tsParticles);
-
-        await window.loadMovePlugin(window.tsParticles);
-
-        await window.loadHexColorPlugin(window.tsParticles);
-
-        await window.loadBranchesPath(window.tsParticles);
-
-        await window.tsParticles.load({
-
-            id: "hero-particles",
-
-            options: {
-
-                fullScreen: { enable: false },
-
-                fpsLimit: 60,
-
-                particles: {
-
-                    number: {
-
-                        value: 160
-
-                    },
-
-                    paint: {
-
-                        color: { value: ["#39ff14", "#ff00d4", "#bf00ff", "#00e5ff"] },
-
-                        fill: { enable: true }
-
-                    },
-
-                    shape: { type: "circle" },
-
-                    opacity: {
-
-                        value: { min: .5, max: 1 },
-
-                        animation: { enable: true, speed: 1.6, sync: false }
-
-                    },
-
-                    size: {
-
-                        value: { min: 2, max: 5 },
-
-                        animation: { enable: true, speed: 5, sync: false }
-
-                    },
-
-                    move: {
-
-                        enable: true,
-
-                        speed: 2.8,
-
-                        direction: "none",
-
-                        random: false,
-
-                        straight: false,
-
-                        outModes: { default: "out" },
-
-                        path: {
-
-                            enable: true,
-
-                            generator: "branches",
-
-                            options: {
-
-                                segmentLength: 36,
-
-                                branchChance: .6,
-
-                                maxAngle: Math.PI / 2.6,
-
-                                speedVariation: .35
-
-                            }
-
-                        }
-
-                    }
-
-                },
-
-                responsive: [
-
-                    {
-
-                        maxWidth: 700,
-
-                        options: {
-
-                            particles: {
-
-                                number: { value: 65 }
-
-                            }
-
-                        }
-
-                    }
-
-                ]
-
-            }
-
-        });
-
-        gsap.to(container, { opacity: 1, duration: 1, ease: "power1.out" });
-
-    }
-
-
     const cursor = document.querySelector(".cursor");
-
-    const heroTitle = document.querySelector(".hero-title");
 
     const circleLink = document.querySelector(".circle-link");
 
@@ -208,6 +63,69 @@ if (typeof gsap === "undefined") {
 
             const cleanupFns = [];
 
+
+            /* =========================
+               PÉTALOS FLOTANTES — sobre la imagen de fondo del hero
+               Pequeños pétalos en tonos florales caen y se mecen sobre
+               la imagen. Se omiten con "reduce motion" y se limpian al
+               revertir este contexto.
+            ========================= */
+
+            const petalLayer = document.getElementById("hero-petals");
+
+            if (petalLayer && !isReducedMotion) {
+
+                const petalPalette = ["#f4a0b8", "#f7c8da", "#c8a8e9", "#bfe3c0", "#ffe9b8", "#fdf0f5"];
+
+                const petalCount = window.innerWidth < 700 ? 12 : 26;
+
+                for (let index = 0; index < petalCount; index++) {
+
+                    const petal = document.createElement("span");
+
+                    petal.className = "petal";
+
+                    const size = gsap.utils.random(6, 16);
+
+                    petal.style.width = size + "px";
+
+                    petal.style.height = (size * gsap.utils.random(1.15, 1.5)).toFixed(1) + "px";
+
+                    petal.style.left = gsap.utils.random(0, 100) + "%";
+
+                    petal.style.background = gsap.utils.random(petalPalette);
+
+                    petalLayer.appendChild(petal);
+
+                    const fallDistance = petalLayer.clientHeight * gsap.utils.random(.9, 1.2);
+
+                    gsap.to(petal, {
+
+                        keyframes: {
+
+                            y: [-60, fallDistance],
+
+                            x: [0, gsap.utils.random(-140, 140)],
+
+                            rotation: [0, gsap.utils.random(-260, 260)],
+
+                            opacity: [0, gsap.utils.random(.35, .8), gsap.utils.random(.35, .8), 0]
+
+                        },
+
+                        ease: "none",
+
+                        duration: gsap.utils.random(11, 22),
+
+                        delay: gsap.utils.random(0, 12),
+
+                        repeat: -1
+
+                    });
+
+                }
+
+            }
 
 
             /* =========================
@@ -333,132 +251,7 @@ if (typeof gsap === "undefined") {
 
             }
 
-           /* =========================
-   HERO — construcción de "NEIYAN EUSSE."
-   La secuencia BUILD/UNBUILD: 1) las letras llegan una a una desde
-   lugares al azar pero aterrizan en casillas intercambiadas (queda
-   mal escrito), 2) desarme total, 3) reconstrucción correcta,
-   letra por letra.
-========================= */
-
-const heroTargets = gsap.utils.toArray(".split-hero");
-
-const dot = document.querySelector(".dot");
-
-let heroSplit = null;
-
-
-if (heroTargets.length) {
-
-    if (isReducedMotion) {
-
-        gsap.set(heroTargets, { opacity: 1 });
-
-        if (dot) gsap.set(dot, { opacity: 1 });
-
-    } else {
-
-        heroSplit = SplitText.create(heroTargets, {
-            type: "chars",
-            charsClass: "hero-char"
-        });
-
-        const chars = heroSplit.chars;
-
-        /* Medir el layout ANTES de transformar nada: cada rect es la
-           "casilla" donde esa letra debe quedar. */
-        const homeRects = chars.map((char) => char.getBoundingClientRect());
-
-        const landAt = (fromIndex, toIndex) => ({
-            x: homeRects[toIndex].left - homeRects[fromIndex].left,
-            y: homeRects[toIndex].top - homeRects[fromIndex].top
-        });
-
-        /* Baraja los destinos: es lo que produce el texto mal escrito
-           en el primer intento de construcción. */
-        const slotOrder = chars.map((_, index) => index);
-
-        for (let i = slotOrder.length - 1; i > 0; i--) {
-
-            const j = Math.floor(Math.random() * (i + 1));
-
-            [slotOrder[i], slotOrder[j]] = [slotOrder[j], slotOrder[i]];
-
-        }
-
-        // Estado inicial: invisible, cada letra en un punto al azar.
-        gsap.set(chars, {
-
-            opacity: 0,
-
-            x: () => gsap.utils.random(-520, 520),
-            y: () => gsap.utils.random(-360, 360),
-
-            rotate: () => gsap.utils.random(-180, 180),
-
-            scale: () => gsap.utils.random(.4, 1.7)
-
-        });
-
-        const buildTimeline = gsap.timeline({ delay: .2 });
-
-        // 1) Intento fallido: aterrizan en casillas ajenas.
-        buildTimeline.to(chars, {
-
-            opacity: 1,
-            scale: 1,
-            duration: .8,
-            ease: "power3.out",
-            stagger: { each: .055, from: "random" },
-
-            x: (index) => landAt(index, slotOrder[index]).x,
-            y: (index) => landAt(index, slotOrder[index]).y,
-
-            rotate: () => gsap.utils.random(-16, 16)
-
-        });
-
-        // Pausa: tiempo para leer el desorden.
-        buildTimeline.to({}, { duration: .7 });
-
-        // 2) Desarme total: salen volando y se pierden en el aire.
-        buildTimeline.to(chars, {
-
-            opacity: 0,
-            scale: .6,
-            duration: .5,
-            ease: "power2.in",
-            stagger: { each: .03, from: "random" },
-
-            x: () => gsap.utils.random(-520, 520),
-            y: () => gsap.utils.random(-360, 360),
-
-            rotate: () => gsap.utils.random(-220, 220)
-
-        });
-
-        // 3) Reconstrucción correcta: vuelven a su sitio, letra por letra.
-        buildTimeline.to(chars, {
-
-            opacity: 1,
-            x: 0,
-            y: 0,
-            rotate: 0,
-            scale: 1,
-            duration: 1,
-ease: "elastic.out(1, .5)",
-
-            stagger: .07
-
-        });
-
-        // Las partículas aparecen cuando termina todo el build/unbuild.
-        buildTimeline.eventCallback("onComplete", () => initHeroParticles());
-
-    }
-}
-
-            /* =========================
+/* =========================
                TÍTULOS GRANDES — visibilidad base
                El "statement-title" se escribe con tipeo (bloque ABOUT) y
                el "contact-title" se construye (bloque CONTACT); acá solo
@@ -884,30 +677,6 @@ ease: "elastic.out(1, .5)",
 
 
             /* =========================
-               HERO PARALLAX
-            ========================= */
-
-            if (!isReducedMotion && heroTitle) {
-
-                gsap.to(heroTitle, {
-
-                    y: () => (document.documentElement.scrollHeight - window.innerHeight) * .08,
-                    ease: "none",
-
-                    scrollTrigger: {
-                        trigger: document.body,
-                        start: "top top",
-                        end: "bottom bottom",
-                        scrub: true
-                    }
-
-                });
-
-            }
-
-
-
-            /* =========================
                BOTÓN MAGNÉTICO — la flecha circular del hero se estira
                hacia el cursor mientras lo tiene cerca y vuelve a su
                sitio con un rebote elástico al soltar. El giro de 45°
@@ -1077,7 +846,7 @@ ease: "elastic.out(1, .5)",
 
                 cleanupFns.forEach((fn) => fn());
 
-                if (heroSplit) heroSplit.revert();
+                if (petalLayer) petalLayer.innerHTML = "";
 
                 aboutSplits.forEach((split) => split.revert());
 

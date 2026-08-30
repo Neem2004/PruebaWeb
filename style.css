@@ -278,10 +278,22 @@ a:focus-visible,
 
     justify-content: space-between;
 
+    overflow: hidden;
+
+    background-color: var(--bg);
+
+    background-image: url("img/fondo.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
 }
 
 
-.hero-particles {
+.hero-petals {
 
     position: absolute;
 
@@ -291,7 +303,20 @@ a:focus-visible,
 
     pointer-events: none;
 
+}
+
+
+.petal {
+
+    position: absolute;
+
+    top: -6%;
+
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+
     opacity: 0;
+
+    will-change: transform;
 
 }
 
@@ -313,41 +338,7 @@ a:focus-visible,
 
     font-weight: 600;
 
-}
-
-
-.hero-title {
-
-    position: relative;
-
-    z-index: 1;
-
-    font-size: clamp(72px, 17vw, 260px);
-
-    line-height: .77;
-
-    letter-spacing: -.095em;
-
-    font-weight: 900;
-
-    text-transform: uppercase;
-
-    will-change: transform;
-
-    /* Necesario para que el rotateX por carácter del intro (script.js) se vea en 3D */
-    perspective: 800px;
-
-}
-
-.hero-char {
-
-    display: inline-block;
-
-    transform-style: preserve-3d;
-
-    backface-visibility: hidden;
-
-    will-change: transform, opacity, filter;
+    text-shadow: 0 0 12px rgba(255, 255, 255, .75);
 
 }
 
@@ -357,27 +348,6 @@ a:focus-visible,
 .contact-char {
 
     display: inline-block;
-
-}
-
-
-.hero-title .line {
-
-    display: block;
-
-}
-
-
-.hero-title .indent {
-
-    padding-left: 12vw;
-
-}
-
-
-.dot {
-
-    font-size: .7em;
 
 }
 
@@ -1091,9 +1061,9 @@ footer {
     }
 
 
-    .hero-title {
+    .hero-petals {
 
-        transform: none !important;
+        display: none;
 
     }
 
@@ -1146,16 +1116,9 @@ footer {
     }
 
 
-    .about-copy:nth-child(2) {
+.about-copy:nth-child(2) {
 
         grid-column: 2 / 3;
-
-    }
-
-
-    .hero-title {
-
-        font-size: clamp(64px, 15vw, 180px);
 
     }
 
@@ -1174,23 +1137,9 @@ footer {
     }
 
 
-    .hero {
+.hero {
 
         padding-top: 120px;
-
-    }
-
-
-    .hero-title {
-
-        font-size: 23vw;
-
-    }
-
-
-    .hero-title .indent {
-
-        padding-left: 4vw;
 
     }
 
